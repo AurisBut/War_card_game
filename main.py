@@ -59,58 +59,77 @@ for x in range(26): # Because card deck contains 52 cards and we split evenly by
 
 game_on = True
 round_num = 0
-# Game on
 while game_on:
+
     round_num += 1
-    print(f'Round {round_num}')
+    print(f"Round {round_num}")
 
+    # Check to see if a player is out of cards:
     if len(player_one.all_cards) == 0:
-        print('Player One, out of cards! Player Two Wins!')
-        game_on = False
-        break
-    if len(player_two.all_cards) == 0:
-        print('Player Two, out of cards! Player One Wins!')
+        print("Player One out of cards! Game Over")
+        print("Player Two Wins!")
         game_on = False
         break
 
-    # START A NEW ROUND
+    if len(player_two.all_cards) == 0:
+        print("Player Two out of cards! Game Over")
+        print("Player One Wins!")
+        game_on = False
+        break
+
+    # Otherwise, the game is still on!
+
+    # Start a new round and reset current cards "on the table"
     player_one_cards = []
     player_one_cards.append(player_one.remove_one())
+
     player_two_cards = []
     player_two_cards.append(player_two.remove_one())
 
-# WHILE AT WAR
-at_war = True
-while at_war: # Comparison is still going
-    if player_one_cards[-1].value > player_two_cards[-1].value:
-        player_one.add_cards(player_one_cards)
-        player_one.add_cards(player_two_cards)
-        at_war = False
+    at_war = True
 
-    elif player_two_cards[-1].value > player_one_cards[-1].value:
-        player_two.add_cards(player_one_cards)
-        player_two.add_cards(player_two_cards)
-        at_war = False
+    while at_war:
 
-    else: # in this case we have a war!
-        print('WAR!')
+        if player_one_cards[-1].value > player_two_cards[-1].value:
 
-        if len(player_one.all_cards) < 5:
-            print('Player One unable to declare war')
-            print('PLAYER TWO WINS!')
-            game_on = False
-            break
+            # Player One gets the cards
+            player_one.add_cards(player_one_cards)
+            player_one.add_cards(player_two_cards)
 
-        elif len(player_two.all_cards) < 5:
-            print('Player Two unable to declare war')
-            print('PLAYER ONE WINS!')
-            game_on = False
-            break
+            # No Longer at "war" , time for next round
+            at_war = False
+
+        # Player Two Has higher Card
+        elif player_one_cards[-1].value < player_two_cards[-1].value:
+
+            # Player Two gets the cards
+            player_two.add_cards(player_one_cards)
+            player_two.add_cards(player_two_cards)
+
+            # No Longer at "war" , time for next round
+            at_war = False
 
         else:
-            for num in range(5):
-                player_one_cards.append(player_one.remove_one())
-                player_two_cards.append(player_two.remove_one())
+            print('WAR!')
+            # This occurs when the cards are equal.
+            # We'll grab another card each and continue the current war.
 
+            # First check to see if player has enough cards
 
+            # Check to see if a player is out of cards:
+            if len(player_one.all_cards) < 5:
+                print("Player One unable to play war! Game Over at War")
+                print("Player Two Wins! Player One Loses!")
+                game_on = False
+                break
 
+            elif len(player_two.all_cards) < 5:
+                print("Player Two unable to play war! Game Over at War")
+                print("Player One Wins! Player One Loses!")
+                game_on = False
+                break
+            # Otherwise, we're still at war, so we'll add the next cards
+            else:
+                for num in range(5):
+                    player_one_cards.append(player_one.remove_one())
+                    player_two_cards.append(player_two.remove_one())
